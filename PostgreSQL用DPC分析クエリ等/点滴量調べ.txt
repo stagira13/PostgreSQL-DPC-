@@ -1,0 +1,12 @@
+﻿WITH eng AS (select データ識別番号,入院年月日,実施年月日,病棟コード,診療明細名称,行為回数,使用量,translate(診療明細名称,
+'－０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄeｆｇｈiｊｋｌｍｎｏｐｑｒｓｕｖｗｘｙｚ'
+,
+'-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') AS 診療明細名称2
+from etable
+where データ区分 = 33
+AND 入院年月日 = 実施年月日)
+select 病棟コード,データ識別番号-10 AS ID,実施年月日,SUM(CAST(substring(診療明細名称2 from '([0-9]*)mL') as Numeric)*行為回数*使用量)
+from eng
+Where 診療明細名称2 ~ '[0-9]*mL'
+AND 診療明細名称2 !~ '\DmL' 
+group by 病棟コード,データ識別番号,実施年月日

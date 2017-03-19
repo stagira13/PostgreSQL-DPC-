@@ -1,0 +1,8 @@
+﻿--単位は点になります
+
+select e.データ識別番号,e.実施年月日,e.診療明細名称,SUM(e.明細点数・金額*e.行為回数)
+from etable AS e
+Where e.データ区分 = 60
+AND (e.データ識別番号,e.実施年月日) IN (select データ識別番号,実施年月日 
+from dtable Where データ区分 = 93)
+group by e.データ識別番号,e.実施年月日,e.診療明細名称
